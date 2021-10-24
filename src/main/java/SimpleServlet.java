@@ -51,17 +51,12 @@ public class SimpleServlet extends HttpServlet {
         // and now validate url path and return the response status code
         // (and maybe also some value if input is valid)
 
-        try {
-            UrlPath urlInfo = new UrlPath(urlParts);
+        if (UrlValidation.isCorrect(urlParts)) {
             response.setStatus(HttpServletResponse.SC_OK);
-            // do any sophisticated processing with urlParts which contains all the url params
-            // TODO: process url params in `urlParts`
             response.getWriter().write("Post request success");
-//            response.getWriter().println("Printing success");
-
-        } catch (IllegalArgumentException e) {
+        } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            e.printStackTrace();
+            response.getWriter().write("Invalid URL");
         }
     }
 

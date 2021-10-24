@@ -10,12 +10,7 @@
  * index: 7. Part: 123
  */
 
-public class UrlPath {
-    private Integer resortID;
-    private String seasonID;
-    private String dayID;
-    private Integer skierID;
-
+public class UrlValidation {
     private static final String SEASONS = "seasons";
     private static final String DAYS = "days";
     private static final String SKIERS = "skiers";
@@ -23,42 +18,16 @@ public class UrlPath {
     private static final Integer DAY_FIRST = 1;
     private static final Integer DAY_LAST = 366;
 
-    public UrlPath(String[] urlParts) throws IllegalArgumentException{
-        if (!urlLengthValid(urlParts)) throw new IllegalArgumentException("invalid length");
-        if (!urlDefaultWordValid(urlParts)) throw new IllegalArgumentException("invalid default words");
-        if (!urlInfoFieldValid(urlParts)) throw new IllegalArgumentException("invalid info field");
-        this.resortID = Integer.parseInt(urlParts[1]);
-        this.seasonID = urlParts[3];
-        this.dayID = urlParts[5];
-        this.skierID = Integer.parseInt(urlParts[7]);
-    }
-
-    public Integer getResortID() {
-        return this.resortID;
-    }
-
-    public String getSeasonID() {
-        return this.seasonID;
-    }
-
-    public String getDayID() {
-        return this.dayID;
-    }
-
-    public Integer getSkierID() {
-        return this.skierID;
-    }
-
-    private boolean urlValid(String[] urlParts) {
+    public static boolean isCorrect(String[] urlParts) {
         return urlLengthValid(urlParts) && urlDefaultWordValid(urlParts) && urlInfoFieldValid(urlParts);
     }
 
-    private boolean urlLengthValid(String[] urlParts) {
+    private static boolean urlLengthValid(String[] urlParts) {
         // length
         return urlParts.length == URL_LENGTH;
     }
 
-    private boolean urlDefaultWordValid(String[] urlParts) {
+    private static boolean urlDefaultWordValid(String[] urlParts) {
         // default words
         boolean validSeasonsWord = urlParts[2].equals(SEASONS);
         boolean validDaysWord = urlParts[4].equals(DAYS);
@@ -66,7 +35,7 @@ public class UrlPath {
         return validSeasonsWord && validDaysWord && validSkiersWord;
     }
 
-    private boolean urlInfoFieldValid(String[] urlParts) {
+    private static boolean urlInfoFieldValid(String[] urlParts) {
         // type, can cast.
         boolean resortIDisInt = isInteger(urlParts[1]);
         boolean skierIDisInt = isInteger(urlParts[7]);
@@ -80,7 +49,7 @@ public class UrlPath {
         return resortIDisInt && skierIDisInt && dayIDWithinRange;
     }
 
-    public static boolean isInteger(String str) {
+    private static boolean isInteger(String str) {
         if (str == null) {
             return false;
         }
