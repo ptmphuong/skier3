@@ -1,3 +1,11 @@
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+
 /**
  * Length: 8
  * index: 0. Part:
@@ -20,6 +28,11 @@ public class UrlValidation {
 
     public static boolean isCorrect(String[] urlParts) {
         return urlLengthValid(urlParts) && urlDefaultWordValid(urlParts) && urlInfoFieldValid(urlParts);
+    }
+
+    public static String getSkierID(String[] urlParts) {
+        String skierIDStr = urlParts[urlParts.length-1];
+        return skierIDStr;
     }
 
     private static boolean urlLengthValid(String[] urlParts) {
@@ -71,5 +84,37 @@ public class UrlValidation {
             }
         }
         return true;
+    }
+
+    public static void main(String[] args) throws JSONException {
+        String schemaStr = "{" +
+                "    \"$schema\": \"http://json-schema.org/draft-04/schema#\"," +
+                "    \"title\": \"LiftIndo\",\n" +
+                "    \"description\": \"LiftInfo jsonObject\",\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"properties\": {\n" +
+                "        \"liftID\": {\n" +
+                "            \"description\": \"The unique identifier for a lift\",\n" +
+                "            \"type\": \"integer\"\n" +
+                "        },\n" +
+                "        \"skierID\": {\n" +
+                "            \"description\": \"The unique identifier for a skier\",\n" +
+                "            \"type\": \"integer\"\n" +
+                "        },\n" +
+                "        \"time\": {\n" +
+                "            \"description\": \"time\",\n" +
+                "            \"type\": \"integer\",\n" +
+                "            \"minimum\": 0,\n" +
+                "        },\n" +
+                "    },\n" +
+                "    \"required\": [\"liftID\", \"skierID\", \"time\"]\n" +
+                "}";
+        String jsonString = "{\"liftID\":31,\"time\":363}";
+        JSONObject schemaObg = new JSONObject(schemaStr);
+        Schema schema = SchemaLoader.load(schemaObg);
+        JSONObject json = new JSONObject(jsonString);
+        schema.validate(json);
+        System.out.println(json);
+        System.out.println(json.toString());
     }
 }

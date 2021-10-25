@@ -1,7 +1,10 @@
+import org.json.JSONObject;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "SimpleServlet", value = "/SimpleServlet")
 public class SimpleServlet extends HttpServlet {
@@ -20,11 +23,11 @@ public class SimpleServlet extends HttpServlet {
         response.setContentType("text/html");
 
         // sleep for 1000ms. You can vary this value for different tests
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(200);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         String urlPath = request.getPathInfo();
         String[] urlParts = urlPath.split("/");
@@ -39,8 +42,6 @@ public class SimpleServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // validate URL
         String urlPath = request.getPathInfo();
-
-        // check we have a URL!
         if (urlPath == null || urlPath.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("missing parameters");
@@ -48,20 +49,45 @@ public class SimpleServlet extends HttpServlet {
         }
 
         String[] urlParts = urlPath.split("/");
-        // and now validate url path and return the response status code
-        // (and maybe also some value if input is valid)
-
         if (UrlValidation.isCorrect(urlParts)) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("Post request success");
+            String jsonStr = getPostRequestBodyStr(request, urlParts);
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = new JSONObject(jsonStr);
+                if (JsonValidation.isCorrect(jsonObject)) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+            response.getWriter().write("Processed json");
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("Invalid URL");
         }
+
+        response.getWriter().flush();
     }
 
     public void destroy() {
         // nothing to do here
+    }
+
+    private String getPostRequestBodyStr(HttpServletRequest request, String[] urlParts) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        List<String> params = new ArrayList<>();
+        String s;
+        while ((s = request.getReader().readLine()) != null) {
+            sb.append(s);
+            params.add(s);
+        }
+        String skierID = ",\"skierID\":" + UrlValidation.getSkierID(urlParts) + "}";
+        sb.deleteCharAt(sb.length()-1);
+        sb.append(skierID);
+        return sb.toString();
     }
 
 }
