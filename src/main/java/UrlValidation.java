@@ -1,10 +1,7 @@
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.SchemaLoader;
-import org.json.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
 
 /**
  * Length: 8
