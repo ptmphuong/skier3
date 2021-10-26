@@ -6,15 +6,32 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
 public class ChannelFactory extends BasePooledObjectFactory<Channel> {
 
+    private final static Logger logger = Logger.getLogger(ChannelFactory.class.getName());
+    private String HOST;
+    private static String RABBIT_USERNAME;
+    private static String RABBIT_PASSWORD;
     private final Connection connection;
 
     ChannelFactory() throws IOException, TimeoutException {
+        setProperties();
         ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setHost(HOST);
+        connectionFactory.setUsername(RABBIT_USERNAME);
+        connectionFactory.setPassword(RABBIT_PASSWORD);
         this.connection = connectionFactory.newConnection();
+    }
+
+    private void setProperties() {
+        Properties prop = ReadProperty.load();
+        HOST = prop.getProperty("ip");
+        RABBIT_USERNAME = prop.getProperty("rabbit_username");
+        RABBIT_PASSWORD = prop.getProperty("rabbit_password");
     }
 
     @Override
@@ -25,5 +42,13 @@ public class ChannelFactory extends BasePooledObjectFactory<Channel> {
     @Override
     public PooledObject<Channel> wrap(Channel channel) {
         return new DefaultPooledObject<>(channel);
+    }
+
+    public static void main(String[] args) {
+        Properties prop = ReadProperty.load();
+        String host = prop.getProperty("ip");
+        String username = prop.getProperty("rabbit_username");
+        String password = prop.getProperty("rabbit_password");
+        System.out.println(host + username + password);
     }
 }
