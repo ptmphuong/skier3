@@ -15,7 +15,7 @@ public class SimpleServlet extends HttpServlet {
     private final static Logger logger = Logger.getLogger(SimpleServlet.class.getName());
     private final static String QUEUE_NAME = "LiftInfo";
     private String msg;
-    private ObjectPool<Channel> pool;
+    private GenericObjectPool<Channel> pool;
     private JSONObject message;
 
     public void init() throws ServletException {
@@ -23,12 +23,13 @@ public class SimpleServlet extends HttpServlet {
 
         try {
             ChannelFactory factory = new ChannelFactory();
-            pool = new GenericObjectPool<>(factory);
+            this.pool = new GenericObjectPool<>(factory);
+//            this.pool.setMaxTotal(10);
         } catch (Exception e) {
             logger.info("Cannot create channel factory - " + e);
             e.printStackTrace();
         }
-        // Initialization
+//         Initialization
         msg = "Hello World";
     }
 

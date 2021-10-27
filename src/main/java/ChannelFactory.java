@@ -4,7 +4,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeoutException;
@@ -13,6 +12,7 @@ import java.util.logging.Logger;
 public class ChannelFactory extends BasePooledObjectFactory<Channel> {
 
     private final static Logger logger = Logger.getLogger(ChannelFactory.class.getName());
+    private final String LOCAL_HOST = "localhost";
     private String HOST;
     private static String RABBIT_USERNAME;
     private static String RABBIT_PASSWORD;
@@ -30,8 +30,10 @@ public class ChannelFactory extends BasePooledObjectFactory<Channel> {
     private void setProperties() {
         Properties prop = ReadProperty.load();
         HOST = prop.getProperty("ip");
-        RABBIT_USERNAME = prop.getProperty("rabbit_username");
-        RABBIT_PASSWORD = prop.getProperty("rabbit_password");
+        if (!HOST.equals(LOCAL_HOST)) {
+            RABBIT_USERNAME = prop.getProperty("rabbit_username");
+            RABBIT_PASSWORD = prop.getProperty("rabbit_password");
+        }
     }
 
     @Override
@@ -44,11 +46,4 @@ public class ChannelFactory extends BasePooledObjectFactory<Channel> {
         return new DefaultPooledObject<>(channel);
     }
 
-    public static void main(String[] args) {
-        Properties prop = ReadProperty.load();
-        String host = prop.getProperty("ip");
-        String username = prop.getProperty("rabbit_username");
-        String password = prop.getProperty("rabbit_password");
-        System.out.println(host + username + password);
-    }
 }
