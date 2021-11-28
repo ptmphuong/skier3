@@ -59,20 +59,18 @@ public class SimpleServlet extends HttpServlet {
 
         String[] urlParts = urlPath.split("/");
         if (UrlValidation.isCorrect(urlParts)) {
-            String jsonStr = getPostRequestBodyStr(request, urlParts);
-            logger.info("Correct url parts");
-            JSONObject jsonObject = null;
+            //
+            String jsonString = getPostRequestBodyStr(request);
+            logger.info("request body: " + jsonString);
+            PostBody postBody = null;
             try {
-                jsonObject = new JSONObject(jsonStr);
-                if (JsonValidation.isCorrect(jsonObject)) {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    this.message = jsonObject;
-                } else {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                }
+                postBody = PostBody.fromJsonStr(jsonString);
+                UrlValidation correctUrlParts = new UrlValidation(urlParts);
+                SkierMessage message = new SkierMessage(correctUrlParts, postBody);
+                this.message = message.toJson();
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.info("cannot create jsonObject from request");
+                logger.info("cannot create PostBody object from request");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
             response.getWriter().write("Processed json");
@@ -90,7 +88,7 @@ public class SimpleServlet extends HttpServlet {
     public void destroy() {
     }
 
-    private String getPostRequestBodyStr(HttpServletRequest request, String[] urlParts) throws IOException {
+    private String getPostRequestBodyStr(HttpServletRequest request) throws IOException {
         StringBuilder sb = new StringBuilder();
         List<String> params = new ArrayList<>();
         String s;
@@ -98,10 +96,6 @@ public class SimpleServlet extends HttpServlet {
             sb.append(s);
             params.add(s);
         }
-        String skierID = ",\"skierID\":" + UrlValidation.getSkierID(urlParts) + "}";
-        sb.deleteCharAt(sb.length()-1);
-        sb.append(skierID);
-        logger.info("request to string: " + sb.toString());
         return sb.toString();
     }
 
@@ -110,6 +104,7 @@ public class SimpleServlet extends HttpServlet {
             Channel channel = pool.borrowObject();
             channel.queueDeclare(QUEUE_NAME, true, false, false, null);
             channel.basicPublish("", QUEUE_NAME, null, message.toString().getBytes());
+            logger.info("sent message to queue");
             pool.returnObject(channel);
         } catch (Exception e) {
             logger.info("problem sending message to queue");

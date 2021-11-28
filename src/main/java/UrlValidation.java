@@ -15,6 +15,8 @@ import org.json.JSONObject;
  * index: 7. Part: 123
  */
 
+// /skiers/{resortID}/seasons/{seasonID}/days/{dayID}/skiers/{skierID}
+
 public class UrlValidation {
     private static final String SEASONS = "seasons";
     private static final String DAYS = "days";
@@ -22,6 +24,39 @@ public class UrlValidation {
     private static final Integer URL_LENGTH = 8;
     private static final Integer DAY_FIRST = 1;
     private static final Integer DAY_LAST = 366;
+
+    private int resortID;
+    private int seasonID;
+    private int dayID;
+    private int skierID;
+
+
+    public UrlValidation(String[] urlParts) {
+        if (isCorrect(urlParts)) {
+            this.resortID = Integer.parseInt(urlParts[1]);
+            this.seasonID = Integer.parseInt(urlParts[3]);
+            this.dayID = Integer.parseInt(urlParts[5]);
+            this.skierID = Integer.parseInt(urlParts[7]);
+        } else {
+            throw new IllegalArgumentException("Invalid url parts");
+        }
+    }
+
+    public int getResortID() {
+        return resortID;
+    }
+
+    public int getSeasonID() {
+        return seasonID;
+    }
+
+    public int getDayID() {
+        return dayID;
+    }
+
+    public int getSkierID() {
+        return skierID;
+    }
 
     public static boolean isCorrect(String[] urlParts) {
         return urlLengthValid(urlParts) && urlDefaultWordValid(urlParts) && urlInfoFieldValid(urlParts);
@@ -86,7 +121,7 @@ public class UrlValidation {
     public static void main(String[] args) throws JSONException {
         String schemaStr = "{" +
                 "    \"$schema\": \"http://json-schema.org/draft-04/schema#\"," +
-                "    \"title\": \"LiftIndo\",\n" +
+                "    \"title\": \"LiftInfo\",\n" +
                 "    \"description\": \"LiftInfo jsonObject\",\n" +
                 "    \"type\": \"object\",\n" +
                 "    \"properties\": {\n" +

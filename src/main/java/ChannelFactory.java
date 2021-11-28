@@ -13,17 +13,20 @@ public class ChannelFactory extends BasePooledObjectFactory<Channel> {
 
     private final static Logger logger = Logger.getLogger(ChannelFactory.class.getName());
     private final String LOCAL_HOST = "localhost";
+
     private String HOST;
+    private final Connection connection;
     private static String RABBIT_USERNAME;
     private static String RABBIT_PASSWORD;
-    private final Connection connection;
 
     ChannelFactory() throws IOException, TimeoutException {
         setProperties();
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.setHost(HOST);
-        connectionFactory.setUsername(RABBIT_USERNAME);
-        connectionFactory.setPassword(RABBIT_PASSWORD);
+        if (!HOST.equals(LOCAL_HOST)) {
+            connectionFactory.setUsername(RABBIT_USERNAME);
+            connectionFactory.setPassword(RABBIT_PASSWORD);
+        }
         this.connection = connectionFactory.newConnection();
     }
 
@@ -34,6 +37,7 @@ public class ChannelFactory extends BasePooledObjectFactory<Channel> {
             RABBIT_USERNAME = prop.getProperty("rabbit_username");
             RABBIT_PASSWORD = prop.getProperty("rabbit_password");
         }
+
     }
 
     @Override
