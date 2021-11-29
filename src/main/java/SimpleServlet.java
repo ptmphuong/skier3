@@ -14,6 +14,7 @@ import com.rabbitmq.client.Channel;
 public class SimpleServlet extends HttpServlet {
     private final static Logger logger = Logger.getLogger(SimpleServlet.class.getName());
     private final static String QUEUE_NAME = "LiftInfo";
+    private final static String EXCHANGE_NAME = "LiftInfoExchange";
     private String msg;
     private GenericObjectPool<Channel> pool;
     private JSONObject message;
@@ -103,7 +104,8 @@ public class SimpleServlet extends HttpServlet {
         try {
             Channel channel = pool.borrowObject();
             channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-            channel.basicPublish("", QUEUE_NAME, null, message.toString().getBytes());
+            channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+            channel.basicPublish(EXCHANGE_NAME, "", null, message.toString().getBytes());
             logger.info("sent message to queue");
             pool.returnObject(channel);
         } catch (Exception e) {
