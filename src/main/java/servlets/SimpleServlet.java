@@ -1,4 +1,5 @@
-import org.apache.commons.pool2.ObjectPool;
+package servlets;
+
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.json.JSONObject;
 import javax.servlet.*;
@@ -6,11 +7,16 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import com.rabbitmq.client.Channel;
+import rmqConnection.ChannelFactory;
+import validations.PostBody;
+import validations.SkierMessage;
+import validations.UrlValidation;
 
-@WebServlet(name = "SimpleServlet", value = "/SimpleServlet")
+@WebServlet(name = "servlets.SimpleServlet", value = "/servlets.SimpleServlet")
 public class SimpleServlet extends HttpServlet {
     private final static Logger logger = Logger.getLogger(SimpleServlet.class.getName());
     private final static String QUEUE_NAME = "LiftInfo";
@@ -44,7 +50,14 @@ public class SimpleServlet extends HttpServlet {
 
         // Send the response
         PrintWriter out = response.getWriter();
-        out.println("<h1>" + msg + "</h1>");
+        out.println(Arrays.toString(urlParts));
+        if (UrlValidation.correctSkiersGETVerticalAtResort(urlParts)) {
+            out.println("<h1>" + msg + "- get vertical at resort" + "</h1>");
+        } else if (UrlValidation.correctSkiersGETSkiDayVertical(urlParts)) {
+            out.println("<h1>" + msg + "- get ski day vertical" + "</h1>");
+        } else {
+            out.println("<h1>" + "Invalid URL" + "</h1>");
+        }
     }
 
     @Override
@@ -59,19 +72,19 @@ public class SimpleServlet extends HttpServlet {
         }
 
         String[] urlParts = urlPath.split("/");
-        if (UrlValidation.isCorrect(urlParts)) {
+        if (UrlValidation.correctSkiersPOST(urlParts)) {
             //
             String jsonString = getPostRequestBodyStr(request);
             logger.info("request body: " + jsonString);
             PostBody postBody = null;
             try {
                 postBody = PostBody.fromJsonStr(jsonString);
-                UrlValidation correctUrlParts = new UrlValidation(urlParts);
+                UrlValidation correctUrlParts = UrlValidation.skiersPOST(urlParts);
                 SkierMessage message = new SkierMessage(correctUrlParts, postBody);
                 this.message = message.toJson();
             } catch (Exception e) {
                 e.printStackTrace();
-                logger.info("cannot create PostBody object from request");
+                logger.info("cannot create validations.PostBody object from request");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
             response.getWriter().write("Processed json");

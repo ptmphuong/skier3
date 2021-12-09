@@ -1,6 +1,7 @@
-import org.json.JSONObject;
+package validations;
 
-import javax.servlet.http.HttpServletResponse;
+import org.json.JSONObject;
+import validations.PostBody;
 
 public class SkierMessage {
     private int resortID;
@@ -37,7 +38,7 @@ public class SkierMessage {
             JSONObject object = new JSONObject(str);
             return object;
         } catch (Exception e) {
-            throw new IllegalArgumentException("cannot turn SkierMessage to JSONObject: " + e);
+            throw new IllegalArgumentException("cannot turn validations.SkierMessage to JSONObject: " + e);
         }
     }
 

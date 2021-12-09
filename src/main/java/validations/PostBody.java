@@ -1,11 +1,6 @@
-import com.google.gson.Gson;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONException;
-import org.json.JSONObject;
+package validations;
 
-import java.util.Optional;
+import com.google.gson.Gson;
 
 public class PostBody {
     int liftID;
@@ -21,7 +16,7 @@ public class PostBody {
 
     @Override
     public String toString() {
-        return "PostBody{" +
+        return "validations.PostBody{" +
                 "liftID=" + liftID +
                 ", time=" + time +
                 '}';
