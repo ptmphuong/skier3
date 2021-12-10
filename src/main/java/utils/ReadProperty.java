@@ -8,8 +8,17 @@ import java.util.logging.Logger;
 public class ReadProperty {
 
     private final static Logger logger = Logger.getLogger(ReadProperty.class.getName());
+
     public static Properties loadRmqProperties() {
         return load("rabbitMQ.properties");
+    }
+
+    public static Properties loadResortsDBConfig() {
+        return load("resortsdb.properties");
+    }
+
+    public static Properties loadSkiersDBConfig() {
+        return load("skiersdb.properties");
     }
 
     private static Properties load(String propertyFilename) {
