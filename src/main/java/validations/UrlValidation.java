@@ -57,35 +57,47 @@ public class UrlValidation {
     }
 
     public static boolean correctSkiersPOST(String[] urlParts) {
-        // .../skiers/{resortID}/seasons/{seasonID}/days/{dayID}/skiers/{skierID}
+        // POST/skiers/{resortID}/seasons/{seasonID}/days/{dayID}/skiers/{skierID}
         return validSkiersPostUrlLen(urlParts) && validSkiersPostDefaultWordPositions(urlParts) && validSkiersPostInfoField(urlParts);
     }
 
-    public static boolean correctSkiersGETSkiDayVertical(String[] urlParts) {
-        // .../skiers/{resortID}/seasons/{seasonID}/days/{dayID}/skiers/{skierID}
+    public static boolean correctSkiersGETTotalVerticalForSkiDay(String[] urlParts) {
+        // get the total vertical for the skier for the specified ski day
+        // GET/skiers/{resortID}/seasons/{seasonID}/days/{dayID}/skiers/{skierID}
         return validSkiersPostUrlLen(urlParts) && validSkiersPostDefaultWordPositions(urlParts) && validSkiersPostInfoField(urlParts);
     }
 
-    public static boolean correctSkiersGETVerticalAtResort(String[] urlParts) {
+    public static boolean correctSkiersGETTotalVerticalAtResort(String[] urlParts) {
+        // get the total vertical for the skier the specified resort. If no season is specified, return all seasons
+        // GET/skiers/{skierID}/vertical
         boolean correctLen = (urlParts.length == 3);
         boolean correctDefaultWords = urlParts[2].equals(VERTICAL);
         boolean correctInfoField = isInteger(urlParts[1]);
         return correctLen && correctDefaultWords && correctInfoField;
     }
 
-    public static boolean correctResortsGETAllResorts(String[] urlParts) {
-        // .../resorts
-        boolean correctLen = (urlParts.length == 0);
-        return correctLen;
-    }
-
-    public static boolean correctResortsGETSeasons(String[] urlParts) {
-        // .../resorts/{resortID}/seasons/
-        boolean correctLen = (urlParts.length == 3);
-        boolean correctDefaultWords = urlParts[2].equals(SEASONS);
-        boolean correctInfoField = isInteger(urlParts[1]);
+    public static boolean correctResortsGetUniqueSkiers(String[] urlParts) {
+        // get number of unique skiers at resort/season/day
+        // GET/resorts/{resortID}/seasons/{seasonID}/days/{dayID}/skiers
+        boolean correctLen = (urlParts.length == 7);
+        boolean correctDefaultWords = urlParts[2].equals(SEASONS) && urlParts[4].equals(DAYS) && urlParts[6].equals(SKIERS);
+        boolean correctInfoField = isInteger(urlParts[1]) && isInteger(urlParts[3]) && isInteger(urlParts[5]);
         return correctLen && correctDefaultWords && correctInfoField;
     }
+
+//    public static boolean correctResortsGETAllResorts(String[] urlParts) {
+//        // .../resorts
+//        boolean correctLen = (urlParts.length == 0);
+//        return correctLen;
+//    }
+//
+//    public static boolean correctResortsGETSeasons(String[] urlParts) {
+//        // .../resorts/{resortID}/seasons/
+//        boolean correctLen = (urlParts.length == 3);
+//        boolean correctDefaultWords = urlParts[2].equals(SEASONS);
+//        boolean correctInfoField = isInteger(urlParts[1]);
+//        return correctLen && correctDefaultWords && correctInfoField;
+//    }
 
     private static boolean validSkiersPostUrlLen(String[] urlParts) {
         // length

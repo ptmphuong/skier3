@@ -54,6 +54,7 @@ public class DataSource {
     }
 
     public static HikariDataSource getDataSource(String dbName) {
+        // resortsdb OR skiersdb
         setDbProperties(dbName);
         setDsConfig();
         return ds;

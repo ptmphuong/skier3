@@ -21,10 +21,9 @@ public class ResortServlet extends HttpServlet {
 
         PrintWriter out = response.getWriter();
         out.println(Arrays.toString(urlParts));
-        if (UrlValidation.correctResortsGETAllResorts(urlParts)) {
-            out.println("<h1>" + "it works - get resorts" + "</h1>");
-        } else if (UrlValidation.correctResortsGETSeasons(urlParts)) {
-            out.println("<h1>" + "it works - get seasons" + "</h1>");
+
+        if (UrlValidation.correctResortsGetUniqueSkiers(urlParts)) {
+            out.println("<h1>" + "it works - get number of unique skiers at resort/season/day" + "</h1>");
         } else {
             out.println("<h1>" + "Invalid URL" + "</h1>");
         }

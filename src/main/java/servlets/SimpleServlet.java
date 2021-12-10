@@ -51,10 +51,11 @@ public class SimpleServlet extends HttpServlet {
         // Send the response
         PrintWriter out = response.getWriter();
         out.println(Arrays.toString(urlParts));
-        if (UrlValidation.correctSkiersGETVerticalAtResort(urlParts)) {
+
+        if (UrlValidation.correctSkiersGETTotalVerticalAtResort(urlParts)) {
             out.println("<h1>" + msg + "- get vertical at resort" + "</h1>");
-        } else if (UrlValidation.correctSkiersGETSkiDayVertical(urlParts)) {
-            out.println("<h1>" + msg + "- get ski day vertical" + "</h1>");
+        } else if (UrlValidation.correctSkiersGETTotalVerticalForSkiDay(urlParts)) {
+            out.println("<h1>" + msg + "- get vertical for ski day" + "</h1>");
         } else {
             out.println("<h1>" + "Invalid URL" + "</h1>");
         }
