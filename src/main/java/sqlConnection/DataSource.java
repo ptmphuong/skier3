@@ -26,15 +26,22 @@ public class DataSource {
     private static void setDbProperties(String dbName) {
         // dbName should be skiers or resorts
         Properties properties;
-        if (dbName.equals("skiers")) properties = ReadProperty.loadSkiersDBConfig();
-        else properties = ReadProperty.loadResortsDBConfig();
-        DATABASE = properties.getProperty("mysql_database");
-        HOST_NAME = properties.getProperty("mysql_endpoint");
-        PORT = properties.getProperty("mysql_port");
-        USERNAME = properties.getProperty("mysql_username");
-        PASSWORD = properties.getProperty("mysql_password");
-        url = String
-                .format("jdbc:mysql://%s:%s/%s?serverTimezone=UTC", HOST_NAME, PORT, DATABASE);
+        try {
+            if (dbName.equals("skiers")) properties = ReadProperty.loadSkiersDBConfig();
+            else properties = ReadProperty.loadResortsDBConfig();
+            DATABASE = properties.getProperty("mysql_database");
+            HOST_NAME = properties.getProperty("mysql_endpoint");
+            PORT = properties.getProperty("mysql_port");
+            USERNAME = properties.getProperty("mysql_username");
+            PASSWORD = properties.getProperty("mysql_password");
+            url = String
+                    .format("jdbc:mysql://%s:%s/%s?serverTimezone=UTC", HOST_NAME, PORT, DATABASE);
+            System.out.println(DATABASE + " " + HOST_NAME + " " + PORT + " " + USERNAME + " " + url);
+            logger.info("load db config success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("cannot load db config");
+        }
     }
 
     private static void setDsConfig() {
@@ -54,9 +61,10 @@ public class DataSource {
     }
 
     public static HikariDataSource getDataSource(String dbName) {
-        // resortsdb OR skiersdb
         setDbProperties(dbName);
+        logger.info("set properties");
         setDsConfig();
+        logger.info("set config");
         return ds;
     }
 

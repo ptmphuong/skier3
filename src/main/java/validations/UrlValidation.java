@@ -61,7 +61,7 @@ public class UrlValidation {
         return validSkiersPostUrlLen(urlParts) && validSkiersPostDefaultWordPositions(urlParts) && validSkiersPostInfoField(urlParts);
     }
 
-    public static boolean correctSkiersGETTotalVerticalForSkiDay(String[] urlParts) {
+    public static boolean correctSkiersGETVerticalByDay(String[] urlParts) {
         // get the total vertical for the skier for the specified ski day
         // GET/skiers/{resortID}/seasons/{seasonID}/days/{dayID}/skiers/{skierID}
         return validSkiersPostUrlLen(urlParts) && validSkiersPostDefaultWordPositions(urlParts) && validSkiersPostInfoField(urlParts);
@@ -76,7 +76,7 @@ public class UrlValidation {
         return correctLen && correctDefaultWords && correctInfoField;
     }
 
-    public static boolean correctResortsGetUniqueSkiers(String[] urlParts) {
+    public static boolean correctResortsGETUniqueSkiers(String[] urlParts) {
         // get number of unique skiers at resort/season/day
         // GET/resorts/{resortID}/seasons/{seasonID}/days/{dayID}/skiers
         boolean correctLen = (urlParts.length == 7);

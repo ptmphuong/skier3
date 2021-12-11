@@ -1,5 +1,6 @@
 package servlets;
 
+import Dao.SkiersDao;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.json.JSONObject;
 import javax.servlet.*;
@@ -21,9 +22,11 @@ public class SimpleServlet extends HttpServlet {
     private final static Logger logger = Logger.getLogger(SimpleServlet.class.getName());
     private final static String QUEUE_NAME = "LiftInfo";
     private final static String EXCHANGE_NAME = "LiftInfoExchange";
+    private final static String SKIERS_TABLE = "skiers";
     private String msg;
     private GenericObjectPool<Channel> pool;
     private JSONObject message;
+    private SkiersDao skiersDao;
 
     public void init() throws ServletException {
         super.init();
@@ -37,7 +40,10 @@ public class SimpleServlet extends HttpServlet {
             e.printStackTrace();
         }
 //         Initialization
-        msg = "Hello World";
+        this.msg = "Hello World";
+        this.skiersDao = new SkiersDao(SKIERS_TABLE);
+        logger.info("init set up done");
+
     }
 
     @Override
@@ -50,14 +56,31 @@ public class SimpleServlet extends HttpServlet {
 
         // Send the response
         PrintWriter out = response.getWriter();
-        out.println(Arrays.toString(urlParts));
+//        out.println(Arrays.toString(urlParts));
 
         if (UrlValidation.correctSkiersGETTotalVerticalAtResort(urlParts)) {
-            out.println("<h1>" + msg + "- get vertical at resort" + "</h1>");
-        } else if (UrlValidation.correctSkiersGETTotalVerticalForSkiDay(urlParts)) {
-            out.println("<h1>" + msg + "- get vertical for ski day" + "</h1>");
+            // GET/skiers/{skierID}/vertical
+            int result = skiersDao.getTotalVerticalForSkier(Integer.parseInt(urlParts[1]));
+            String displayText = String.format("Total vertical for skierID=%s is %d",
+                    urlParts[1], result);
+            response.setStatus(HttpServletResponse.SC_OK);
+            out.write(displayText);
+        } else if (UrlValidation.correctSkiersGETVerticalByDay(urlParts)) {
+            int result = skiersDao.getVerticalByDayForSkier(
+                    Integer.parseInt(urlParts[1]),
+                    Integer.parseInt(urlParts[3]),
+                    Integer.parseInt(urlParts[5]),
+                    Integer.parseInt(urlParts[7])
+            );
+            String displayText = String.format("Total vertical for skierID=%s on dayID=%s is %d",
+                    urlParts[7],
+                    urlParts[5],
+                    result);
+            response.setStatus(HttpServletResponse.SC_OK);
+            out.write(displayText);
         } else {
-            out.println("<h1>" + "Invalid URL" + "</h1>");
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            out.write("invalid url");
         }
     }
 
