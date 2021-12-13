@@ -14,7 +14,7 @@ import java.util.Arrays;
 @WebServlet(name = "servlets.ResortServlet", value = "/servlets.ResortServlet")
 public class ResortServlet extends HttpServlet {
     private ResortsDao resortsDao;
-    private final static String RESORT_TABLE = "resorts";
+    private final static String RESORT_TABLE = "aggResort";
 
     public void init() throws ServletException {
         super.init();

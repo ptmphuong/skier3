@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 
 public class SkiersDao {
     private final static Logger logger = Logger.getLogger(SkiersDao.class.getName());
+    private final static String AGG_SKIER_TABLE = "aggSkier";
+    private final static String AGG_SKIER_VERTICAL_TABLE = "aggSkierVertical";
     private static HikariDataSource dataSource; //hikaricp is faster
     String dbName;
 
@@ -23,8 +25,8 @@ public class SkiersDao {
 
     public int getVerticalByDayForSkier(int resortId, int seasonId, int dayId, int skierId){
         int result = 0;
-        String findVerticalByDay = " SELECT COUNT(skierID) as count" +
-                " FROM " + this.dbName +
+        String findVerticalByDay = " SELECT numRuns" +
+                " FROM " + AGG_SKIER_TABLE +
                 " WHERE resortID = ?" +
                 " AND seasonID = ?" +
                 " AND dayID = ?" +
@@ -50,9 +52,9 @@ public class SkiersDao {
 
     public int getTotalVerticalForSkier(int skierId){
         int result = 0;
-        String findTotalVertical = " SELECT COUNT(skierID) as count" +
+        String findTotalVertical = " SELECT numRuns" +
                 " FROM " +
-                this.dbName + ////todo table name
+                AGG_SKIER_VERTICAL_TABLE + ////todo table name
                 " WHERE skierID = ?;";
         Connection conn = null;
         PreparedStatement preparedStatement = null;

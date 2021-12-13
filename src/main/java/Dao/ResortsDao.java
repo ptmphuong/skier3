@@ -21,7 +21,7 @@ public class ResortsDao {
 
     public int getUniqueSkierForResort(int resortId, int seasonId, int dayId){
         int result = 0;
-        String findAllUniqueSkier = " SELECT COUNT(DISTINCT skierID) as count " +
+        String findAllUniqueSkier = " SELECT numSkiers " +
                 " FROM " +
                 this.dbName +
                 " WHERE resortID = ? " +
